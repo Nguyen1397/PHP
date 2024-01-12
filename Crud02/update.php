@@ -4,14 +4,8 @@ require_once 'config.php';
 $id = $name = $email = "";
 $id_err = $name_err = $email_err = "";
 
-if(isset($_POST["id"]) && !empty($_POST["id"])){
-
-    $input_id = trim($_POST["id"]);
-    if(empty($input_id)) {
-        $id_err = 'Please enter an id.';
-    } else{
-        $id = $input_id;
-    }
+if(!empty($_POST["id"])){
+    $id = $_POST["id"];
 
     $input_name = trim($_POST["name"]);
     if(empty($input_name)){
@@ -33,12 +27,12 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
         $sql = "UPDATE students SET name=?, email=? WHERE id=?";
 
         if($stmt = mysqli_prepare($link, $sql)){
-            mysqli_stmt_bind_param($stmt,"iss", $param_id, $param_name, $param_email);
+            mysqli_stmt_bind_param($stmt,"ssi", $param_name, $param_email, $param_id);
  
-            $param_id = $id;
+            
             $param_name = $name;
             $param_email = $email;
-
+            $param_id = $id;
             if(mysqli_stmt_execute($stmt)){
                 header("location: index.php");
                 exit();
@@ -112,11 +106,6 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                     </div>
                     <p>Please edit the input values and submit to update the record.</p>
                     <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
-                        <div class="form-group <?php echo (!empty($id_err)) ? 'has-error': ''; ?>">
-                            <label>Id</label>
-                            <textarea name="Id" class="form-control"><?php echo $id; ?></textarea>
-                            <span class="help-block"><?php echo $id_err;?></span>
-                        </div>
                         <div class="form-group <?php echo (!empty($name_err)) ? 'has-error':''; ?>">
                             <label>Name</label>
                             <input type="text" name="name" class="form-control" value="<?php echo $name; ?>">
